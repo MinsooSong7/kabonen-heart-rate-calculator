@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title id="pageTitle">카보넨 공식 목표 심박수 계산기</title>
+    <meta name="description" id="metaDescription" content="카보넨 공식을 사용하여 나이와 안정 시 심박수를 기반으로 유산소, 저강도, 고강도 등 운동 목적에 맞는 목표 심박수 구간을 정확히 계산하세요.">
+    <meta name="keywords" id="metaKeywords" content="목표 심박수, 카보넨 공식, 심박수 계산기, 운동 심박수, 유산소 운동, 심박수 구간, 안정 시 심박수">
+
+    <link rel="canonical" href="https://your-domain.com/calculator.html"> <div id="hreflang-container"></div>
+
+    <script type="application/ld+json" id="schema-data"></script>
+
+    <style>
+        /* CSS는 이전과 동일하여 생략되었습니다. 필요시 위의 코드 블록을 참조하세요. */
+        :root{--bg-color:#f5f7fa;--container-bg-color:#ffffff;--primary-text-color:#2c3e50;--secondary-text-color:#555;--accent-color:#007b5e;--border-color:#e0e0e0;--shadow-color:rgba(0, 0, 0, 0.08);--zone1-color:#2ecc71;--zone2-color:#f1c40f;--zone3-color:#e67e22;--zone4-color:#e74c3c;--font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;}
+        *, *::before, *::after {box-sizing: border-box;margin: 0;padding: 0;}
+        body{font-family:var(--font-family);background-color:var(--bg-color);color:var(--primary-text-color);display:flex;justify-content:center;align-items:center;min-height:100vh;padding:2rem 1rem;}
+        main{background-color:var(--container-bg-color);padding:2rem 2.5rem;border-radius:16px;box-shadow:0 10px 30px var(--shadow-color);width:100%;max-width:500px;}
+        h1{color:var(--primary-text-color);text-align:center;margin-bottom:1.5rem;font-size:1.8rem;font-weight:700;line-height:1.3;}
+        h1 .heart{color:#e74c3c;font-size:1.1em;vertical-align:middle;}
+        .language-switcher{text-align:center;margin-bottom:2rem;display:flex;gap:0.5rem;justify-content:center;}
+        .language-switcher button{background-color:#e9ecef;color:var(--secondary-text-color);border:none;padding:0.5rem 1rem;border-radius:20px;cursor:pointer;font-size:0.85rem;font-weight:600;transition:background-color 0.3s, color 0.3s;}
+        .language-switcher button:hover{background-color:#ced4da;}
+        .language-switcher button.active{background-color:var(--accent-color);color:white;box-shadow:0 4px 10px rgba(0, 123, 94, 0.3);}
+        .input-group{margin-bottom:1.5rem;}
+        label{display:block;font-weight:600;margin-bottom:0.5rem;color:var(--secondary-text-color);}
+        input[type="number"]{width:100%;padding:0.8rem;border:1px solid var(--border-color);border-radius:8px;font-size:1rem;transition:border-color 0.3s, box-shadow 0.3s;}
+        .input-note{display:block;margin-top:0.5rem;font-size:0.8rem;color:var(--secondary-text-color);line-height:1.4;}
+        input[type="number"]:focus{outline:none;border-color:var(--accent-color);box-shadow:0 0 0 4px rgba(0, 123, 94, 0.15);}
+        .results-section, .guide-section{margin-top:2.5rem;padding-top:2rem;border-top:1px solid var(--border-color);}
+        h2, h3{text-align:center;margin-bottom:1.5rem;color:var(--primary-text-color);font-size:1.5rem;}
+        h3{font-size:1.2rem;}
+        .result-item{background-color:var(--bg-color);padding:1rem 1.25rem;border-radius:8px;margin-bottom:1rem;display:flex;justify-content:space-between;align-items:center;border-left:5px solid;transition:background-color 0.3s;}
+        .result-item.zone1{border-left-color:var(--zone1-color);}
+        .result-item.zone2{border-left-color:var(--zone2-color);}
+        .result-item.zone3{border-left-color:var(--zone3-color);}
+        .result-item.zone4{border-left-color:var(--zone4-color);}
+        .result-details{display:flex;flex-direction:column;gap:4px;}
+        .result-details strong{font-weight:700;font-size:1rem;}
+        .exercise-recommendation{font-size:0.85rem;color:#7f8c8d;}
+        .bpm-value{font-weight:600;font-size:1.1rem;color:var(--primary-text-color);white-space:nowrap;}
+        table{width:100%;border-collapse:collapse;}
+        th, td{padding:0.75rem;text-align:center;border-bottom:1px solid var(--border-color);}
+        thead{background-color:#2c3e50;color:white;}
+        tbody tr:nth-child(even){background-color:var(--bg-color);}
+        .guide-note{margin-top:1rem;font-size:0.8rem;text-align:center;color:var(--secondary-text-color);}
+    </style>
+</head>
+<body>
+
+    <main>
+        <header>
+            <h1></h1>
+        </header>
+        
+        <div class="language-switcher">
+            <button data-lang="ko" class="active">한국어</button>
+            <button data-lang="en">English</button>
+            <button data-lang="ja">日本語</button>
+            <button data-lang="zh">中文</button>
+        </div>
+        
+        <section class="input-section">
+            <div class="input-group">
+                <label for="age"></label>
+                <input type="number" id="age">
+            </div>
+            <div class="input-group">
+                <label for="restingHR"></label>
+                <input type="number" id="restingHR">
+                <small class="input-note"></small>
+            </div>
+        </section>
+
+        <section class="results-section">
+            <h2></h2>
+            <div id="results-container"></div>
+        </section>
+        
+        <section class="guide-section">
+            <h3></h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th id="guide-age"></th>
+                        <th id="guide-male"></th>
+                        <th id="guide-female"></th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <p class="guide-note"></p>
+        </section>
+    </main>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+        const translations = {
+            ko: {
+                pageTitle: "카보넨 공식 목표 심박수 계산기 | SEO 마스터",
+                meta_description: "카보넨 공식을 사용하여 나이와 안정 시 심박수를 기반으로 유산소, 저강도, 고강도 등 운동 목적에 맞는 목표 심박수 구간을 정확히 계산하세요.",
+                meta_keywords: "목표 심박수, 카보넨 공식, 심박수 계산기, 운동 심박수, 유산소 운동, 심박수 구간, 안정 시 심박수",
+                title: `<span class="heart">❤️</span> 카보넨 공식을 이용한<br>목표 심박수 계산기`,
+                ageLabel: "나이 (만)", agePlaceholder: "나이를 숫자로 입력하세요 (예: 30)",
+                restingHrLabel: "안정 시 심박수 (bpm)", restingHrPlaceholder: "편안한 상태의 1분간 심박수 (예: 65)",
+                restingHrNote: "※ 본인의 안정 시 심박수를 모르실 경우 아래의<br>성별 및 나이별 평균 안정 시 심박수 가이드 표를 참고하세요.",
+                resultsTitle: "목표 심박수 구간", guideTitle: "성별 및 나이별 평균 안정 시 심박수",
+                guideAge: "나이 (세)", guideMale: "남성 평균 (bpm)", guideFemale: "여성 평균 (bpm)",
+                guideNote: "※ 개인차가 있으며, 정확한 측정값을 입력하는 것이 가장 좋습니다.",
+                zone1Name: "유산소", zone1Reco: "추천: 걷기, 가벼운 스트레칭",
+                zone2Name: "저강도", zone2Reco: "추천: 슬로우 조깅, 빠른 걷기",
+                zone3Name: "중강도", zone3Reco: "추천: 조깅, 가벼운 등산",
+                zone4Name: "고강도", zone4Reco: "추천: 달리기, 인터벌 트레이닝",
+                about: "약 ", over: " 이상",
+                schema_name: "목표 심박수 계산기 (카보넨 공식)",
+                schema_description: "운동 강도 설정을 위한 개인별 목표 심박수 범위를 계산하는 웹 애플리케이션입니다."
+            },
+            en: {
+                pageTitle: "Target Heart Rate Calculator (Karvonen) | SEO Master",
+                meta_description: "Accurately calculate your target heart rate zones for aerobic, low-intensity, and high-intensity exercise based on your age and resting heart rate using the Karvonen formula.",
+                meta_keywords: "target heart rate, karvonen formula, heart rate calculator, exercise heart rate, aerobic exercise, heart rate zones, resting heart rate",
+                title: `<span class="heart">❤️</span> Target Heart Rate Calculator<br>using Karvonen Formula`,
+                ageLabel: "Age (years)", agePlaceholder: "Enter your age (e.g., 30)",
+                restingHrLabel: "Resting Heart Rate (bpm)", restingHrPlaceholder: "Your 1-min heart rate at rest (e.g., 65)",
+                restingHrNote: "※ If you don't know your resting heart rate, please refer to the average resting heart rate guide table below.",
+                resultsTitle: "Target Heart Rate Zones", guideTitle: "Average Resting Heart Rate by Gender & Age",
+                guideAge: "Age", guideMale: "Male Avg. (bpm)", guideFemale: "Female Avg. (bpm)",
+                guideNote: "※ Individual differences exist; entering your precise measurement is best.",
+                zone1Name: "Aerobic", zone1Reco: "Recommended: Walking, light stretching",
+                zone2Name: "Low Intensity", zone2Reco: "Recommended: Slow jogging, brisk walking",
+                zone3Name: "Moderate Intensity", zone3Reco: "Recommended: Jogging, light hiking",
+                zone4Name: "High Intensity", zone4Reco: "Recommended: Running, interval training",
+                about: "Approx. ", over: "+",
+                schema_name: "Target Heart Rate Calculator (Karvonen Formula)",
+                schema_description: "A web application to calculate personalized target heart rate zones for setting exercise intensity."
+            },
+            ja: {
+                pageTitle: "目標心拍数計算機（カルボーネン法）| SEOマスター",
+                meta_description: "カルボーネン法を使用し、年齢と安静時心拍数に基づいて、有酸素運動、低強度、高強度など、運動目的に合った目標心拍数ゾーンを正確に計算します。",
+                meta_keywords: "目標心拍数, カルボーネン法, 心拍数計算機, 運動心拍数, 有酸素運動, 心拍数ゾーン, 安静時心拍数",
+                title: `<span class="heart">❤️</span> カルボーネン法による<br>目標心拍数計算機`,
+                ageLabel: "年齢 (歳)", agePlaceholder: "年齢を数字で入力してください (例: 30)",
+                restingHrLabel: "安静時心拍数 (bpm)", restingHrPlaceholder: "安静時の1分間の心拍数 (例: 65)",
+                restingHrNote: "※ ご自身の安静時心拍数がわからない場合は、下記の性別・年齢別平均安静時心拍数ガイド表をご参照ください。",
+                resultsTitle: "目標心拍数ゾーン", guideTitle: "性別・年齢別 平均安静時心拍数",
+                guideAge: "年齢", guideMale: "男性平均 (bpm)", guideFemale: "女性平均 (bpm)",
+                guideNote: "※ 個人差がありますので、正確な測定値を入力することをお勧めします。",
+                zone1Name: "有酸素", zone1Reco: "推奨：ウォーキング、軽いストレッチ",
+                zone2Name: "低強度", zone2Reco: "推奨：スロージョギング、早歩き",
+                zone3Name: "中強度", zone3Reco: "推奨：ジョギング、軽い登山",
+                zone4Name: "高強度", zone4Reco: "推奨：ランニング、インターバルトレーニング",
+                about: "約 ", over: "以上",
+                schema_name: "目標心拍数計算機（カルボーネン法）",
+                schema_description: "運動強度設定のための個人別目標心拍数範囲を計算するウェブアプリケーションです。"
+            },
+            zh: {
+                pageTitle: "目标心率计算器 (卡氏公式) | SEO大师",
+                meta_description: "使用卡氏公式，根据您的年龄和静息心率，精确计算适合有氧、低强度、高强度等运动目的的目标心率区间。",
+                meta_keywords: "目标心率, 卡氏公式, 心率计算器, 运动心率, 有氧运动, 心率区间, 静息心率",
+                title: `<span class="heart">❤️</span> 使用卡氏公式的<br>目标心率计算器`,
+                ageLabel: "年龄 (岁)", agePlaceholder: "请输入您的年龄 (例如: 30)",
+                restingHrLabel: "静息心率 (bpm)", restingHrPlaceholder: "休息时1分钟的心率 (例如: 65)",
+                restingHrNote: "※ 如果您不知道自己的静息心率，请参考下方的<br>按性别和年龄划分的平均静息心率指南表。",
+                resultsTitle: "目标心率区间", guideTitle: "按性别和年龄划分的平均静息心率",
+                guideAge: "年龄", guideMale: "男性平均 (bpm)", guideFemale: "女性平均 (bpm)",
+                guideNote: "※ 存在个体差异，最好输入您的精确测量值。",
+                zone1Name: "有氧运动", zone1Reco: "推荐：步行、轻度拉伸",
+                zone2Name: "低强度", zone2Reco: "推荐：慢跑、快走",
+                zone3Name: "中等强度", zone3Reco: "推荐：慢跑、轻松徒步",
+                zone4Name: "高强度", zone4Reco: "推荐：跑步、间歇训练",
+                about: "约 ", over: "以上",
+                schema_name: "目标心率计算器（卡氏公式）",
+                schema_description: "用于计算个性化目标心率范围以设定运动强度的网络应用程序。"
+            }
+        };
+
+        const state = {
+            age: null, restingHR: null, zones: [], currentLanguage: 'ko'
+        };
+
+        // DOM 요소 캐싱
+        const ageInput = document.getElementById('age');
+        const restingHRInput = document.getElementById('restingHR');
+        const resultsContainer = document.getElementById('results-container');
+        const languageSwitcher = document.querySelector('.language-switcher');
+        const guideTableBody = document.querySelector('.guide-section tbody');
+
+        const ZONE_CONFIG = [
+            { key: 'zone1', intensity: [0.5, 0.6] }, { key: 'zone2', intensity: [0.6, 0.7] },
+            { key: 'zone3', intensity: [0.7, 0.8] }, { key: 'zone4', intensity: [0.8, 0.9] }
+        ];
+
+        const GUIDE_DATA = [
+            { age: '18 - 25', male: 70, female: 74 }, { age: '26 - 35', male: 71, female: 75 },
+            { age: '36 - 45', male: 72, female: 76 }, { age: '46 - 55', male: 72, female: 76 },
+            { age: '56 - 65', male: 73, female: 77 }, { age: '65', male: 70, female: 73 }
+        ];
+
+        const getLangFromUrl = () => {
+            const hash = window.location.hash;
+            if (hash.startsWith('#lang=')) {
+                const lang = hash.substring(6);
+                if (translations[lang]) return lang;
+            }
+            return 'ko'; // 기본값
+        };
+
+        const updateSeoTags = (lang, t) => {
+            // 메타 태그 업데이트
+            document.getElementById('pageTitle').textContent = t.pageTitle;
+            document.getElementById('metaDescription').setAttribute('content', t.meta_description);
+            document.getElementById('metaKeywords').setAttribute('content', t.meta_keywords);
+            document.documentElement.lang = lang;
+
+            // hreflang 태그 업데이트
+            const hreflangContainer = document.getElementById('hreflang-container');
+            const baseUrl = document.querySelector('link[rel="canonical"]').href || window.location.href.split('#')[0];
+            let hreflangHtml = '';
+            const langMap = { ko: 'ko-KR', en: 'en-US', ja: 'ja-JP', zh: 'zh-CN' };
+            for (const langCode in translations) {
+                hreflangHtml += `<link rel="alternate" hreflang="${langMap[langCode]}" href="${baseUrl}#lang=${langCode}">\n`;
+            }
+            hreflangHtml += `<link rel="alternate" hreflang="x-default" href="${baseUrl}#lang=en">`; // 기본 언어는 영어로 설정
+            hreflangContainer.innerHTML = hreflangHtml;
+            
+            // JSON-LD 구조화 데이터 업데이트
+            const schema = {
+                "@context": "https://schema.org",
+                "@type": "WebApplication",
+                "name": t.schema_name,
+                "description": t.schema_description,
+                "applicationCategory": "HealthApplication",
+                "operatingSystem": "All",
+                "browserRequirements": "Requires HTML5 support",
+                "offers": { "@type": "Offer", "price": "0" }
+            };
+            document.getElementById('schema-data').textContent = JSON.stringify(schema);
+        };
+
+        const render = () => {
+            const lang = state.currentLanguage;
+            const t = translations[lang];
+            
+            updateSeoTags(lang, t);
+
+            // UI 텍스트 업데이트
+            document.querySelector('h1').innerHTML = t.title;
+            document.querySelector('label[for="age"]').textContent = t.ageLabel;
+            ageInput.placeholder = t.agePlaceholder;
+            document.querySelector('label[for="restingHR"]').textContent = t.restingHrLabel;
+            restingHRInput.placeholder = t.restingHrPlaceholder;
+            document.querySelector('.input-note').innerHTML = t.restingHrNote;
+            document.querySelector('.results-section h2').textContent = t.resultsTitle;
+            document.querySelector('.guide-section h3').textContent = t.guideTitle;
+            document.getElementById('guide-age').textContent = t.guideAge;
+            document.getElementById('guide-male').textContent = t.guideMale;
+            document.getElementById('guide-female').textContent = t.guideFemale;
+            document.querySelector('.guide-note').textContent = t.guideNote;
+
+            // 결과 영역 업데이트
+            let resultsHtml = '';
+            if (state.zones.length > 0) {
+                state.zones.forEach((zone, index) => {
+                    resultsHtml += `<div class="result-item zone${index + 1}">...</div>`; // 간단하게 표현
+                });
+            } else {
+                ZONE_CONFIG.forEach((zoneConf, index) => {
+                     const nameKey = `${zoneConf.key}Name`, recoKey = `${zoneConf.key}Reco`;
+                     resultsHtml += `<div class="result-item zone${index + 1}"><div class="result-details"><strong>${t[nameKey]} (Zone ${index + 1})</strong><small class="exercise-recommendation">${t[recoKey]}</small></div><span class="bpm-value">-- bpm</span></div>`;
+                });
+            }
+            resultsContainer.innerHTML = resultsHtml.replace(/<div class="result-item zone\d">...<\/div>/g, (match, p1, offset) => {
+                const index = parseInt(match.match(/zone(\d)/)[1]) - 1;
+                const zone = state.zones[index];
+                return `<div class="result-item zone${index + 1}"><div class="result-details"><strong>${zone.name} (Zone ${index + 1})</strong><small class="exercise-recommendation">${zone.recommendation}</small></div><span class="bpm-value">${zone.minBpm} ~ ${zone.maxBpm} bpm</span></div>`;
+            });
+            
+            // 가이드 테이블 동적 생성
+            let guideHtml = '';
+            GUIDE_DATA.forEach(row => {
+                let ageDisplay = row.age;
+                if(row.age === '65') ageDisplay = '65' + t.over;
+                guideHtml += `<tr><td>${ageDisplay}</td><td>${t.about}${row.male}</td><td>${t.about}${row.female}</td></tr>`;
+            });
+            guideTableBody.innerHTML = guideHtml;
+
+            // 활성 언어 버튼 스타일 업데이트
+            languageSwitcher.querySelectorAll('button').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.lang === lang) btn.classList.add('active');
+            });
+        };
+
+        const calculateAndUpdateState = () => {
+            const age = parseInt(ageInput.value, 10), restingHR = parseInt(restingHRInput.value, 10);
+            if (!age || !restingHR || age <= 0 || restingHR <= 0) {
+                state.zones = []; return;
+            }
+            state.age = age; state.restingHR = restingHR;
+            const maxHR = 220 - age, hrr = maxHR - restingHR;
+            const t = translations[state.currentLanguage];
+            state.zones = ZONE_CONFIG.map(zoneConf => {
+                const nameKey = `${zoneConf.key}Name`, recoKey = `${zoneConf.key}Reco`;
+                return {
+                    name: t[nameKey], recommendation: t[recoKey],
+                    minBpm: Math.round((hrr * zoneConf.intensity[0]) + restingHR),
+                    maxBpm: Math.round((hrr * zoneConf.intensity[1]) + restingHR)
+                };
+            });
+        };
+
+        const handleInputChange = () => {
+            calculateAndUpdateState();
+            render();
+        };
+
+        const handleLanguageChange = (event) => {
+            const selectedLang = event.target.dataset.lang;
+            if (selectedLang && selectedLang !== state.currentLanguage) {
+                state.currentLanguage = selectedLang;
+                window.location.hash = `lang=${selectedLang}`;
+                calculateAndUpdateState();
+                render();
+            }
+        };
+
+        // 초기화
+        state.currentLanguage = getLangFromUrl();
+        ageInput.addEventListener('input', handleInputChange);
+        restingHRInput.addEventListener('input', handleInputChange);
+        languageSwitcher.addEventListener('click', handleLanguageChange);
+        
+        calculateAndUpdateState();
+        render();
+    });
+    </script>
+</body>
+</html>
