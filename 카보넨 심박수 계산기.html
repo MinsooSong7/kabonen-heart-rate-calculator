@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        :root {
+            --bg-color: #f8f9fa;
+            --container-bg-color: #ffffff;
+            --primary-text-color: #2c3e50;
+            --secondary-text-color: #555;
+            --accent-color: #007b5e;
+            --border-color: #e9ecef;
+            --shadow-color: rgba(0, 0, 0, 0.08);
+            --zone1-color: #2ecc71;
+            --zone2-color: #3498db;
+            --zone3-color: #f39c12;
+            --zone4-color: #e74c3c;
+            --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+        .thr-calculator-container { font-family: var(--font-family); background-color: var(--container-bg-color); color: var(--primary-text-color); padding: 2rem 2.5rem; border-radius: 16px; box-shadow: 0 10px 30px var(--shadow-color); width: 100%; max-width: 600px; margin: 2rem auto; border: 1px solid var(--border-color); }
+        *, *::before, *::after { box-sizing: border-box; }
+        .thr-calculator-container h1, .thr-calculator-container h2, .thr-calculator-container h3 { margin: 0 0 1.5rem 0; padding: 0; text-align: center; color: var(--primary-text-color); }
+        .thr-calculator-container h1 { font-size: 1.8rem; font-weight: 700; line-height: 1.3; }
+        .thr-calculator-container h1 .heart { color: #e74c3c; }
+        .thr-calculator-container h2 { font-size: 1.5rem; margin-top: 2.5rem; padding-top: 2rem; border-top: 1px solid var(--border-color); }
+        .thr-calculator-container h3 { font-size: 1.2rem; }
+        .thr-calculator-container .input-group { margin-bottom: 1.5rem; }
+        .thr-calculator-container label { display: block; font-weight: 600; margin-bottom: 0.5rem; color: var(--secondary-text-color); }
+        .thr-calculator-container input[type="number"] { width: 100%; padding: 0.8rem; border: 1px solid var(--border-color); border-radius: 8px; font-size: 1rem; transition: border-color 0.3s, box-shadow 0.3s; }
+        .thr-calculator-container .input-note { display: block; margin-top: 0.5rem; font-size: 0.8rem; color: var(--secondary-text-color); }
+        .thr-calculator-container input[type="number"]:focus { outline: none; border-color: var(--accent-color); box-shadow: 0 0 0 4px rgba(0, 123, 94, 0.15); }
+        .thr-calculator-container .result-item { background-color: var(--bg-color); padding: 1rem 1.25rem; border-radius: 8px; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; border-left: 5px solid; transition: background-color 0.3s, transform 0.2s; }
+        .thr-calculator-container .result-item:hover { transform: translateY(-3px); }
+        .thr-calculator-container .result-item.zone1 { border-left-color: var(--zone1-color); }
+        .thr-calculator-container .result-item.zone2 { border-left-color: var(--zone2-color); }
+        .thr-calculator-container .result-item.zone3 { border-left-color: var(--zone3-color); }
+        .thr-calculator-container .result-item.zone4 { border-left-color: var(--zone4-color); }
+        .thr-calculator-container .result-details { display: flex; flex-direction: column; gap: 4px; }
+        .thr-calculator-container .result-details strong { font-weight: 700; font-size: 1rem; }
+        .thr-calculator-container .exercise-recommendation { font-size: 0.85rem; color: #7f8c8d; }
+        .thr-calculator-container .bpm-value { font-weight: 600; font-size: 1.1rem; color: var(--primary-text-color); white-space: nowrap; }
+        .thr-calculator-container table { width: 100%; border-collapse: collapse; margin-top: 1.5rem; }
+        .thr-calculator-container th, .thr-calculator-container td { padding: 0.75rem; text-align: center; border: 1px solid var(--border-color); }
+        .thr-calculator-container thead { background-color: var(--primary-text-color); color: white; }
+        .thr-calculator-container tbody tr:nth-child(even) { background-color: var(--bg-color); }
+        .thr-calculator-container .guide-note { margin-top: 1rem; font-size: 0.8rem; text-align: center; color: var(--secondary-text-color); }
+    </style>
+</head>
+<body>
+    <main class="thr-calculator-container">
+        <header>
+            <h1><span class="heart">❤️</span> 카보넨 공식을 이용한<br>목표 심박수 계산기</h1>
+        </header>
+        
+        <section class="input-section">
+            <div class="input-group">
+                <label for="age">나이 (만)</label>
+                <input type="number" id="age" placeholder="나이를 숫자로 입력하세요 (예: 35)">
+            </div>
+            <div class="input-group">
+                <label for="restingHR">안정 시 심박수 (bpm)</label>
+                <input type="number" id="restingHR" placeholder="측정한 1분간 심박수 (예: 65)">
+                <small class="input-note">※ 아침에 눈을 뜬 직후, 잠자리에서 일어나기 전 측정하는 것이 가장 정확합니다. 모를 경우 아래 표를 참고하세요.</small>
+            </div>
+        </section>
+
+        <section id="results-section">
+            <h2>나의 운동 목적별 심박수 구간</h2>
+            <div id="results-container"></div>
+        </section>
+        
+        <section class="guide-section">
+            <h3 style="margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color);">성별/나이별 평균 안정 시 심박수 (참고용)</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>나이 (세)</th>
+                        <th>남성 평균 (bpm)</th>
+                        <th>여성 평균 (bpm)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>18 - 25</td><td>62 - 70</td><td>65 - 73</td></tr>
+                    <tr><td>26 - 35</td><td>63 - 71</td><td>66 - 74</td></tr>
+                    <tr><td>36 - 45</td><td>64 - 72</td><td>67 - 75</td></tr>
+                    <tr><td>46 - 55</td><td>65 - 73</td><td>68 - 76</td></tr>
+                    <tr><td>56 - 65</td><td>66 - 74</td><td>69 - 77</td></tr>
+                    <tr><td>65 이상</td><td>65 - 73</td><td>68 - 76</td></tr>
+                </tbody>
+            </table>
+            <p class="guide-note">※ 출처: American Council on Exercise. 개인차가 크므로 직접 측정하는 것을 강력히 권장합니다.</p>
+        </section>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const ageInput = document.getElementById('age');
+            const restingHRInput = document.getElementById('restingHR');
+            const resultsContainer = document.getElementById('results-container');
+            
+            const ZONE_DEFINITIONS = [
+                { name: 'ZONE 1: 회복 및 활성', intensity: [0.5, 0.6], recommendation: '가벼운 걷기, 스트레칭 (운동 후 쿨다운)' },
+                { name: 'ZONE 2: 지구력 향상 (지방 연소)', intensity: [0.6, 0.7], recommendation: '빠르게 걷기, 가벼운 조깅 (다이어트 핵심 구간)' },
+                { name: 'ZONE 3: 심폐기능 강화 (유산소)', intensity: [0.7, 0.8], recommendation: '조깅, 가벼운 등산 (심장 건강 증진)' },
+                { name: 'ZONE 4: 무산소 역치', intensity: [0.8, 0.9], recommendation: '달리기, 인터벌 트레이닝 (경기력 향상)' }
+            ];
+
+            const calculateAndRender = () => {
+                const age = parseInt(ageInput.value, 10);
+                const restingHR = parseInt(restingHRInput.value, 10);
+
+                if (!age || !restingHR || age <= 0 || restingHR <= 0) {
+                    renderInitialState();
+                    return;
+                }
+
+                const maxHR = 220 - age;
+                const hrr = maxHR - restingHR;
+                let html = '';
+
+                ZONE_DEFINITIONS.forEach((zone, index) => {
+                    const minBpm = Math.round((hrr * zone.intensity[0]) + restingHR);
+                    const maxBpm = Math.round((hrr * zone.intensity[1]) + restingHR);
+                    html += `
+                        <div class="result-item zone${index + 1}">
+                            <div class="result-details">
+                                <strong>${zone.name}</strong>
+                                <small class="exercise-recommendation">추천: ${zone.recommendation}</small>
+                            </div>
+                            <span class="bpm-value">${minBpm} ~ ${maxBpm} bpm</span>
+                        </div>`;
+                });
+                resultsContainer.innerHTML = html;
+            };
+
+            const renderInitialState = () => {
+                let html = '';
+                ZONE_DEFINITIONS.forEach((zone, index) => {
+                    html += `
+                        <div class="result-item zone${index + 1}">
+                            <div class="result-details">
+                                <strong>${zone.name}</strong>
+                                <small class="exercise-recommendation">추천: ${zone.recommendation}</small>
+                            </div>
+                            <span class="bpm-value">-- ~ -- bpm</span>
+                        </div>`;
+                });
+                resultsContainer.innerHTML = html;
+            };
+
+            ageInput.addEventListener('input', calculateAndRender);
+            restingHRInput.addEventListener('input', calculateAndRender);
+            
+            renderInitialState(); 
+        });
+    </script>
+</body>
+</html>
